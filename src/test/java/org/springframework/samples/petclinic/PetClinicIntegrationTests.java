@@ -72,6 +72,7 @@ public class PetClinicIntegrationTests {
 		RestTemplate template = builder.baseUri("http://localhost:" + port).build();
 		ResponseEntity<String> result = template.exchange(RequestEntity.get("/owners?lastName=").build(), String.class);
 		assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(result.getBody()).contains("George Franklin").contains("Leo");
 	}
 
 	public static void main(String[] args) {
