@@ -46,20 +46,13 @@ public interface OwnerRepository extends JpaRepository<Owner, Integer> {
 	Page<Owner> findByLastNameStartingWith(String lastName, Pageable pageable);
 
 	/**
-	 * Retrieve an {@link Owner} from the data store by id.
-	 * <p>
-	 * This method returns an {@link Optional} containing the {@link Owner} if found. If
-	 * no {@link Owner} is found with the provided id, it will return an empty
-	 * {@link Optional}.
-	 * </p>
+	 * Retrieve an {@link Owner} with pets, visits, and pet types loaded for the details
+	 * view.
 	 * @param id the id to search for
 	 * @return an {@link Optional} containing the {@link Owner} if found, or an empty
 	 * {@link Optional} if not found.
-	 * @throws IllegalArgumentException if the id is null (assuming null is not a valid
-	 * input for id)
 	 */
-	@Override
 	@EntityGraph(attributePaths = { "pets.visits", "pets.type" })
-	Optional<Owner> findById(Integer id);
+	Optional<Owner> findWithPetDetailsById(Integer id);
 
 }
