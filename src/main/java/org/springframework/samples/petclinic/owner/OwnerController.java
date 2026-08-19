@@ -162,13 +162,16 @@ class OwnerController {
 
 	/**
 	 * Custom handler for displaying an owner.
-	 * @param owner the owner already bound by {@link #findOwner(Integer)}
+	 * @param ownerId the identifier of the owner to display
 	 * @return a ModelMap with the model attributes for the view
 	 */
 	@GetMapping("/owners/{ownerId}")
-	public ModelAndView showOwner(@ModelAttribute("owner") Owner owner) {
+	public ModelAndView showOwner(@PathVariable("ownerId") int ownerId) {
+		Owner owner = this.owners.findWithPetDetailsById(ownerId)
+			.orElseThrow(() -> new IllegalArgumentException("Owner not found with id: " + ownerId
+					+ ". Please ensure the ID is correct and the owner exists in the database."));
 		ModelAndView mav = new ModelAndView("owners/ownerDetails");
-		mav.addObject(owner);
+		mav.addObject("owner", owner);
 		return mav;
 	}
 
