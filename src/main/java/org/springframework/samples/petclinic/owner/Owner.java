@@ -18,6 +18,7 @@ package org.springframework.samples.petclinic.owner;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.samples.petclinic.model.Person;
@@ -115,15 +116,7 @@ public class Owner extends Person {
 	 * @return the Pet with the given id, or null if no such Pet exists for this Owner
 	 */
 	public Pet getPet(Integer id) {
-		for (Pet pet : getPets()) {
-			if (!pet.isNew()) {
-				Integer compId = pet.getId();
-				if (Objects.equals(compId, id)) {
-					return pet;
-				}
-			}
-		}
-		return null;
+		return getPet(pet -> !pet.isNew() && Objects.equals(pet.getId(), id));
 	}
 
 	/**
@@ -133,12 +126,16 @@ public class Owner extends Person {
 	 * @return the Pet with the given name, or null if no such Pet exists for this Owner
 	 */
 	public Pet getPet(String name, boolean ignoreNew) {
-		for (Pet pet : getPets()) {
+		return getPet(pet -> {
 			String compName = pet.getName();
-			if (compName != null && compName.equalsIgnoreCase(name)) {
-				if (!ignoreNew || !pet.isNew()) {
-					return pet;
-				}
+			return compName != null && compName.equalsIgnoreCase(name) && (!ignoreNew || !pet.isNew());
+		});
+	}
+
+	private Pet getPet(Predicate<Pet> matcher) {
+		for (Pet pet : getPets()) {
+			if (matcher.test(pet)) {
+				return pet;
 			}
 		}
 		return null;
